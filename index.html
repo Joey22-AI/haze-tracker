@@ -2,36 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello, World</title>
-  <style>
-    body { margin: 0; min-height: 100vh; display: flex; flex-direction: column;
-           align-items: center; justify-content: center; background: #eaf6ff;
-           font-family: sans-serif; }
-    svg { width: 260px; height: auto; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Haze Tracker SG</title>
+  <meta name="description" content="Live 24-hour PSI and 1-hour PM2.5 for Singapore regions, with threshold alerts.">
+  <meta name="theme-color" content="#16324f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Haze SG">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Hello, World!</h1>
-  <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A pink flower">
-    <!-- stem -->
-    <path d="M100 150 C100 200 95 250 100 295" stroke="#3a8a3a" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <!-- leaves -->
-    <path d="M99 230 C70 215 55 225 50 240 C70 250 90 245 99 230Z" fill="#4caf50"/>
-    <path d="M100 205 C130 190 148 198 152 214 C130 224 108 220 100 205Z" fill="#4caf50"/>
-    <!-- petals -->
-    <g transform="translate(100 100)" fill="#ff7eb6" stroke="#e0508f" stroke-width="1.5">
-      <ellipse cx="0" cy="-38" rx="20" ry="36"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(45)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(90)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(135)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(180)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(225)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(270)"/>
-      <ellipse cx="0" cy="-38" rx="20" ry="36" transform="rotate(315)"/>
-    </g>
-    <!-- center -->
-    <circle cx="100" cy="100" r="22" fill="#ffd54a" stroke="#e0a800" stroke-width="2"/>
-  </svg>
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="" width="36" height="36">
+      <h1>Haze Tracker <span>SG</span></h1>
+    </div>
+    <button id="refresh" class="icon-btn" type="button" aria-label="Refresh readings">&#8635;</button>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Air quality by region</h2>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <p id="updated" class="muted small">Loading latest readings…</p>
+      <p id="error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2>PSI alert</h2>
+      <p class="muted small">Get a notification when the 24-hr PSI in your chosen region reaches your threshold.</p>
+
+      <label class="field">
+        <span>Region</span>
+        <select id="region">
+          <option value="north">North</option>
+          <option value="south">South</option>
+          <option value="east">East</option>
+          <option value="west">West</option>
+          <option value="central">Central</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Alert when PSI reaches</span>
+        <input id="threshold" type="number" inputmode="numeric" min="1" max="500" step="1" value="100">
+      </label>
+      <div class="chips" role="group" aria-label="Threshold presets">
+        <button type="button" class="chip" data-v="51">51 Moderate</button>
+        <button type="button" class="chip" data-v="101">101 Unhealthy</button>
+        <button type="button" class="chip" data-v="201">201 Very unhealthy</button>
+      </div>
+
+      <label class="switch">
+        <input id="enabled" type="checkbox" role="switch">
+        <span class="track" aria-hidden="true"></span>
+        <span>Notify me</span>
+      </label>
+
+      <p id="alert-status" class="status" aria-live="polite"></p>
+      <button id="test" class="btn secondary" type="button">Send test notification</button>
+      <p id="bg-note" class="muted small"></p>
+    </section>
+
+    <section id="install" class="card" hidden>
+      <h2>Add to home screen</h2>
+      <p id="install-text" class="muted small"></p>
+      <button id="install-btn" class="btn" type="button" hidden>Install app</button>
+    </section>
+
+    <p class="foot muted small">
+      Data: National Environment Agency (NEA) via <a href="https://data.gov.sg" rel="noopener">data.gov.sg</a>,
+      under the Singapore Open Data Licence. The 1-hr figure is NEA's hourly PM2.5 concentration (µg/m³),
+      the hourly measure NEA publishes alongside the 24-hr PSI.
+    </p>
+  </main>
+
+  <noscript><p class="error">This app needs JavaScript.</p></noscript>
+  <script src="core.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
